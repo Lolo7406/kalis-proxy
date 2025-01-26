@@ -1,32 +1,46 @@
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
 
 const app = express();
-
-// Active le middleware CORS pour toutes les routes
-app.use(cors());
-
 const PORT = process.env.PORT || 3000;
 
-// Proxy pour l'API MEXC
-app.get('/api/v3/ticker/price', async (req, res) => {
-  const { symbol } = req.query;
+// Configuration sécurisée de CORS
+const corsOptions = {
+  origin: "*", // Autorise toutes les origines, tu peux restreindre en listant les domaines autorisés
+  methods: "GET,HEAD,OPTIONS",
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 
-  if (!symbol) {
-    return res.status(400).json({ error: 'Le paramètre "symbol" est requis.' });
-  }
+app.use(cors(corsOptions));
 
+// Proxy pour rediriger les requêtes vers l'API de MEXC
+app.get("/api/v3/ticker/price", async (req, res) => {
   try {
-    const response = await axios.get(`https://api.mexc.com/api/v3/ticker/price?symbol=${symbol}`);
+    const { symbol } = req.query;
+    if (!symbol) {
+      return res.status(400).json({ error: "Le paramètre 'symbol' est requis." });
+    }
+
+    // Requête vers l'API MEXC
+    const response = await axios.get(
+      `https://api.mexc.com/api/v3/ticker/price?symbol=${symbol}`
+    );
+
+    // Renvoie les données de l'API MEXC
     res.json(response.data);
   } catch (error) {
-    console.error('Erreur lors de la récupération des données depuis MEXC:', error.message);
-    res.status(500).json({ error: 'Impossible de récupérer les données.' });
+    console.error("Erreur lors de la récupération des données :", error.message);
+    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des données." });
   }
 });
 
-// Lance le serveur
+// Gestion des routes inconnues
+app.use((req, res) => {
+  res.status(404).json({ error: "Route introuvable." });
+});
+
+// Démarrage du serveur
 app.listen(PORT, () => {
-  console.log(`Proxy actif sur http://localhost:${PORT}`);
+  console.log(`Serveur proxy en cours d'exécution sur le port ${PORT}`);
 });
