@@ -1,6 +1,7 @@
 {
-  "name": "kalis-proxy",
+  "name": "proxy-server",
   "version": "1.0.0",
+  "description": "Serveur proxy pour rediriger les requêtes vers l'API de MEXC",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -8,6 +9,11 @@
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "node-fetch": "^2.6.7"
-  }
+    "axios": "^1.4.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "TonNom",
+  "license": "ISC"
 }
