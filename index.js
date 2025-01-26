@@ -7,12 +7,17 @@ const PORT = process.env.PORT || 3000;
 
 // Configuration sécurisée de CORS
 const corsOptions = {
-  origin: "*", // Autorise toutes les origines, tu peux restreindre en listant les domaines autorisés
+  origin: "*", // Autorise toutes les origines (peut être restreint si nécessaire)
   methods: "GET,HEAD,OPTIONS",
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
 app.use(cors(corsOptions));
+
+// Route principale pour vérifier que le serveur fonctionne
+app.get("/", (req, res) => {
+  res.send("Serveur proxy en cours d'exécution.");
+});
 
 // Proxy pour rediriger les requêtes vers l'API de MEXC
 app.get("/api/v3/ticker/price", async (req, res) => {
